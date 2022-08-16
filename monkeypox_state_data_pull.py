@@ -29,7 +29,7 @@ def update_timeseries(historical_timeseries, latest_timeseries):
     return concat_df2
 
 # Load in historical state timeseries
-state_ts = pd.read_csv('monkeypox_state_timeseries_latest.csv', usecols = ['State', 'Cumulative Cases', 'AsOf'], parse_dates = ['AsOf'])
+state_ts = pd.read_csv('data/monkeypox_state_timeseries_latest.csv', usecols = ['State', 'Cumulative Cases', 'AsOf'], parse_dates = ['AsOf'])
 historical_latest_date = state_ts['AsOf'].max()
 state_ts.rename(columns = {'State': 'Location', 'Cumulative Cases': 'Cases'}, inplace = True)
 
