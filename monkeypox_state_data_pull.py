@@ -48,6 +48,6 @@ state_latest_data_date = pd.to_datetime(new_state_data['AsOf'].max())
 
 if state_latest_data_date > historical_latest_date:
     concat_df = update_timeseries(state_ts, new_state_data)
-    concat_df.to_csv('data/monkeypox_state_timeseries_latest.csv')
+    concat_df.to_csv('data/monkeypox_state_timeseries_latest.csv', index = False)
 else:
     print('No data to update.')
