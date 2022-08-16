@@ -1,4 +1,4 @@
-name: fetch-covid19-therapeutics-table
+name: fetch-cdc-state-monkeypox-data
 
 on:
   workflow_dispatch:
