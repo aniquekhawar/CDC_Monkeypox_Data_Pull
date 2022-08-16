@@ -1,6 +1,4 @@
 import pandas as pd
-import requests
-from datetime import datetime
 from itertools import product
 
 def update_timeseries(historical_timeseries, latest_timeseries):
