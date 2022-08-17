@@ -1,5 +1,5 @@
 import pandas as pd
-from itertools import product
+import janitor
 
 def update_timeseries(historical_timeseries, latest_timeseries):
     concat_df = pd.concat([historical_timeseries, latest_timeseries])
@@ -7,19 +7,19 @@ def update_timeseries(historical_timeseries, latest_timeseries):
     concat_df['AsOf'] = pd.to_datetime(concat_df['AsOf'])
     cases_to_date = latest_timeseries['Cases'].sum()
 
-    # create data to impute (i.e., when states don't report on a specific day)
-    unique_locations = concat_df['Location'].unique().tolist()
-    imputed_date_range = pd.date_range('2022-8-4', latest_max_date)
-    state_date_pairings = [unique_locations, imputed_date_range]
-    state_date_pairings = [i for i in product(*state_date_pairings)]
-    data_to_append = pd.DataFrame(state_date_pairings, columns = ['Location', 'AsOf'])
+    concat_df = pd.concat([historical_timeseries, latest_timeseries])
+    latest_max_date = latest_timeseries['AsOf'].max()
+    concat_df['AsOf'] = pd.to_datetime(concat_df['AsOf'])
+    cases_to_date = latest_timeseries['Cases'].sum()
 
-    concat_df2 = pd.concat([concat_df, data_to_append])
-    concat_df2.drop_duplicates(subset = ['Location', 'AsOf'], keep = 'first', inplace = True)
+    # impute missing days for states that aren't reporting a specific day
+    dates = dict(AsOf = pd.date_range('2022-8-4', latest_max_date, freq='1D'))
+    concat_df2 = concat_df.complete('Location', dates, fill_value = None)
+
     concat_df2.sort_values(by = ['Location', 'AsOf'], inplace = True)
-    concat_df2['Cases'] = concat_df2.groupby(['Location'])['Cases'].ffill()
+    concat_df2['Cases'] = concat_df2.groupby('Location')['Cases'].ffill()
     print('Missing Cumulative Case Counts:', concat_df['Cases'].isna().sum())
-    concat_df2['Cases'] = concat_df2.groupby(['Location'])['Cases'].bfill()
+    concat_df2['Cases'] = concat_df2.groupby('Location')['Cases'].bfill()
     
     # clean up variable names
     concat_df2.rename(columns = {'Location': 'State', 'Cases': 'Cumulative Cases'}, inplace = True)
@@ -32,6 +32,7 @@ def update_timeseries(historical_timeseries, latest_timeseries):
 state_ts = pd.read_csv('data/monkeypox_state_timeseries_latest.csv', usecols = ['State', 'Cumulative Cases', 'AsOf'], parse_dates = ['AsOf'])
 historical_latest_date = state_ts['AsOf'].max()
 state_ts.rename(columns = {'State': 'Location', 'Cumulative Cases': 'Cases'}, inplace = True)
+state_ts = state_ts[~state_ts['Location'].isin(['Total', 'Non-US Resident'])] # filter out total and Non-US Resident
 
 url = 'https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts.csv'
 new_state_data = pd.read_csv(url, usecols = ['Location', 'Cases', 'AsOf'])
