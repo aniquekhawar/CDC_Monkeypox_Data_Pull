@@ -3,7 +3,7 @@ name: fetch-cdc-state-monkeypox-data
 on:
   workflow_dispatch:
   schedule:
-    - cron: '00 12 * * *' # runs at 8 AM Eastern Every Day
+    - cron: '00 12,00 * * *' # runs at 8 AM Eastern Every Day
 
 jobs:
   build:
