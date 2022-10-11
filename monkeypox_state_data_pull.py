@@ -34,7 +34,7 @@ historical_latest_date = state_ts['AsOf'].max()
 state_ts.rename(columns = {'State': 'Location', 'Cumulative Cases': 'Cases'}, inplace = True)
 state_ts = state_ts[~state_ts['Location'].isin(['Total', 'Non-US Resident'])] # filter out total and Non-US Resident
 
-url = 'https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts.csv'
+url = 'https://www.cdc.gov/wcms/vizdata/poxvirus/monkeypox/data/USmap_counts/exported_files/USmap_counts.csv'
 new_state_data = pd.read_csv(url, usecols = ['Location', 'Cases', 'AsOf'])
 new_state_data = new_state_data[['Location', 'AsOf', 'Cases']].copy()
 new_state_data = new_state_data[~new_state_data['Location'].isin(['Total', 'Non-US Resident'])] # filter out total and Non-US Resident
