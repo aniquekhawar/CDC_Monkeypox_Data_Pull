@@ -27,7 +27,7 @@ jobs:
           python monkeypox_state_data_pull.py
       - name: commit files
         run: |
-          git config --local user.email "action@github.com"
+          git config --local user.email "anique.khawar@gmail.com"
           git config --local user.name "GitHub Action"
           git add -A
           git commit -m "update data" -a --allow-empty
